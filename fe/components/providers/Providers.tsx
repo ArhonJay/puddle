@@ -1,12 +1,6 @@
-/**
- * Client-side Providers Wrapper
- * 
- * Wraps the app with all necessary context providers
- */
-
 'use client';
 
-import { WalletProvider } from '@/contexts/WalletContext';
+import { WalletProvider } from '@/contexts/walletContext';
 import { ReactNode } from 'react';
 
 interface ProvidersProps {

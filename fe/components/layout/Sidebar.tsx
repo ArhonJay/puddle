@@ -1,9 +1,3 @@
-/**
- * Sidebar Navigation
- * 
- * Resizable sidebar (1/5 to 1/2 width) with main navigation links
- */
-
 'use client';
 
 import React, { useState } from 'react';
@@ -28,10 +22,20 @@ const navigation = [
   { name: 'Puddle AI', href: '/puddle/ai', icon: Bot },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  isMobileOpen?: boolean;
+  onClose?: () => void;
+}
+
+export function Sidebar({ isMobileOpen = false, onClose }: SidebarProps = {}) {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [width, setWidth] = useState(20); // Percentage width (20% = 1/5)
+  const [isMounted, setIsMounted] = useState(false);
+
+  React.useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleResize = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -53,18 +57,30 @@ export function Sidebar() {
     document.addEventListener('mouseup', handleMouseUp);
   };
 
+  // Calculate desktop width only on client side
+  const desktopWidth = isMounted && typeof window !== 'undefined' && window.innerWidth >= 1024 
+    ? `${width}%` 
+    : undefined;
+
   return (
     <aside
       className={cn(
         "fixed left-0 top-14 bottom-0 bg-white border-r border-gray-200 z-30 transition-all duration-300",
-        isCollapsed ? "w-16" : ""
+        // Desktop: normal sidebar
+        "lg:w-[20%] md:w-[25%]",
+        // Mobile: slide in/out
+        "lg:translate-x-0",
+        isMobileOpen ? "translate-x-0 w-[75%] shadow-xl" : "-translate-x-full w-[75%]",
+        isCollapsed && "lg:w-16"
       )}
-      style={{ width: isCollapsed ? '64px' : `${width}%` }}
+      style={{ 
+        width: isCollapsed ? '64px' : desktopWidth
+      }}
     >
-      {/* Resize Handle */}
+      {/* Resize Handle - Desktop only */}
       {!isCollapsed && (
         <div
-          className="absolute top-0 right-0 w-1 h-full cursor-ew-resize hover:bg-blue-500 transition-colors group"
+          className="hidden lg:block absolute top-0 right-0 w-1 h-full cursor-ew-resize hover:bg-blue-500 transition-colors group"
           onMouseDown={handleResize}
         >
           <div className="absolute right-0 top-1/2 transform translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -77,23 +93,6 @@ export function Sidebar() {
 
       {/* Sidebar Content */}
       <div className="h-full flex flex-col">
-        {/* Collapse Button */}
-        <div className="p-4 border-b border-gray-200">
-          <button
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className={cn(
-              "w-full flex items-center justify-center p-2 rounded-lg",
-              "hover:bg-gray-100 transition-colors"
-            )}
-            title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          >
-            {isCollapsed ? (
-              <ChevronRight className="w-5 h-5 text-gray-600" />
-            ) : (
-              <ChevronLeft className="w-5 h-5 text-gray-600" />
-            )}
-          </button>
-        </div>
 
         {/* Navigation Links */}
         <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
@@ -105,6 +104,12 @@ export function Sidebar() {
               <Link
                 key={item.name}
                 href={item.href}
+                onClick={() => {
+                  // Close mobile sidebar when link is clicked
+                  if (onClose && window.innerWidth < 1024) {
+                    onClose();
+                  }
+                }}
                 className={cn(
                   "flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200",
                   isActive
@@ -122,22 +127,6 @@ export function Sidebar() {
             );
           })}
         </nav>
-
-        {/* Footer Info */}
-        {!isCollapsed && (
-          <div className="p-4 border-t border-gray-200">
-            <div className="text-xs text-gray-500 space-y-1">
-              <div className="flex items-center justify-between">
-                <span>Network:</span>
-                <span className="font-medium text-blue-600">Testnet</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>Version:</span>
-                <span className="font-medium">v1.0.0</span>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </aside>
   );

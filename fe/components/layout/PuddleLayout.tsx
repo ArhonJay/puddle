@@ -1,33 +1,40 @@
-/**
- * Main Application Layout
- * 
- * Wrapper component that provides navbar, sidebar, and content area
- */
-
 'use client';
 
-import React, { ReactNode } from 'react';
-import { Navbar } from './Navbar';
-import { Sidebar } from './Sidebar';
-import { WalletProvider } from '@/contexts/WalletContext';
+import React, { ReactNode, useState } from 'react';
+import { Navbar } from './navbar';
+import { Sidebar } from './sidebar';
+import { WalletProvider } from '@/contexts/walletContext';
 
 interface PuddleLayoutProps {
   children: ReactNode;
 }
 
 export function PuddleLayout({ children }: PuddleLayoutProps) {
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
   return (
     <WalletProvider>
       <div className="min-h-screen bg-gray-50">
-        {/* Navbar */}
-        <Navbar />
+        <Navbar 
+          onMenuClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
+          isMobileSidebarOpen={isMobileSidebarOpen}
+        />
+        <Sidebar 
+          isMobileOpen={isMobileSidebarOpen}
+          onClose={() => setIsMobileSidebarOpen(false)}
+        />
 
-        {/* Sidebar */}
-        <Sidebar />
+        {/* Mobile overlay */}
+        {isMobileSidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black/50 z-20 lg:hidden"
+            onClick={() => setIsMobileSidebarOpen(false)}
+          />
+        )}
 
-        {/* Main Content */}
-        <main className="pt-14 transition-all duration-300" style={{ marginLeft: '20%' }}>
-          <div className="p-6">
+        {/* Main content with responsive margins */}
+        <main className="pt-14 lg:ml-[20%] md:ml-[25%] ml-0 transition-all duration-300">
+          <div className="p-4 sm:p-6">
             {children}
           </div>
         </main>

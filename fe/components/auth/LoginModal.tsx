@@ -1,17 +1,8 @@
-/**
- * Login Modal Component
- * 
- * Modal dialog for user authentication with multiple options:
- * - Leather Wallet (Stacks)
- * - Email & Password
- * - Google OAuth
- */
-
 'use client';
 
 import React, { useState } from 'react';
 import { X, Wallet, Mail, Chrome } from 'lucide-react';
-import { useWallet } from '@/contexts/WalletContext';
+import { useWallet } from '@/contexts/walletContext';
 import { cn } from '@/lib/utils';
 
 interface LoginModalProps {
@@ -32,20 +23,32 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
     try {
       await connectWithEmail(email, password);
       onClose();
+      // Refresh page to show logged-in state
+      window.location.reload();
     } catch (error) {
       console.error('Email login failed:', error);
     }
   };
 
-  const handleLeatherConnect = () => {
-    connectLeatherWallet();
-    onClose();
+  const handleLeatherConnect = async () => {
+    try {
+      await connectLeatherWallet();
+      onClose();
+      // Small delay to ensure state is updated before refresh
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
+    } catch (error) {
+      console.error('Leather wallet connection failed:', error);
+    }
   };
 
   const handleGoogleConnect = async () => {
     try {
       await connectWithGoogle();
       onClose();
+      // Refresh page to show logged-in state
+      window.location.reload();
     } catch (error) {
       console.error('Google login failed:', error);
     }

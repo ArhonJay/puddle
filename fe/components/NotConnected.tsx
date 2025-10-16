@@ -8,7 +8,7 @@
 
 import React, { useState } from 'react';
 import { Wallet, ArrowRight } from 'lucide-react';
-import { LoginModal } from '@/components/auth/LoginModal';
+import { LoginModal } from '@/components/auth/loginModal';
 
 export function NotConnected() {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -41,22 +41,6 @@ export function NotConnected() {
             <span>Connect Wallet</span>
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </button>
-
-          {/* Info Cards */}
-          <div className="mt-12 grid grid-cols-3 gap-4">
-            <div className="p-4 rounded-lg bg-white border border-gray-200">
-              <div className="text-2xl font-bold text-blue-600 mb-1">Safe</div>
-              <div className="text-xs text-gray-500">Secure Connection</div>
-            </div>
-            <div className="p-4 rounded-lg bg-white border border-gray-200">
-              <div className="text-2xl font-bold text-sky-600 mb-1">Fast</div>
-              <div className="text-xs text-gray-500">Quick Setup</div>
-            </div>
-            <div className="p-4 rounded-lg bg-white border border-gray-200">
-              <div className="text-2xl font-bold text-cyan-600 mb-1">Easy</div>
-              <div className="text-xs text-gray-500">User Friendly</div>
-            </div>
-          </div>
         </div>
       </div>
 

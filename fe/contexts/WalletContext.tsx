@@ -23,7 +23,7 @@ export interface WalletState {
   userSession: any | null;
 }
 export interface WalletContextType extends WalletState {
-  connectLeatherWallet: () => void;
+  connectLeatherWallet: () => Promise<void>;
   connectWithEmail: (email: string, password: string) => Promise<void>;
   connectWithGoogle: () => Promise<void>;
   disconnect: () => void;
