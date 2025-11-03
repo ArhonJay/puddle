@@ -1,14 +1,39 @@
+'use client';
+
+import { useState } from 'react';
 import { MainLayout } from '@/components/layout';
 import { PixelScene, HeroSection, FeaturesSection } from '@/components/landing';
 import { AdditionalSections } from '@/components/landing/AdditionalSections';
 
 export default function LandingPage() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  const handleSceneLoaded = () => {
+    setIsLoading(false);
+  };
+
   return (
     <MainLayout>
+      {/* Loading Screen */}
+      {isLoading && (
+        <div className="fixed inset-0 z-50 bg-[#0a1628] flex flex-col items-center justify-center">
+          <div className="text-center">
+            <h2 className="font-[family-name:var(--font-pixel)] text-2xl text-white mb-4" style={{ imageRendering: 'pixelated' }}>
+              Puddling
+            </h2>
+            <div className="flex gap-2 justify-center">
+              <div className="w-3 h-3 bg-blue-400 rounded-sm animate-pulse" style={{ animationDelay: '0ms' }}></div>
+              <div className="w-3 h-3 bg-blue-400 rounded-sm animate-pulse" style={{ animationDelay: '150ms' }}></div>
+              <div className="w-3 h-3 bg-blue-400 rounded-sm animate-pulse" style={{ animationDelay: '300ms' }}></div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="relative min-h-screen">
         {/* Pixel Scene Background - Fixed position */}
         <div className="fixed inset-0 w-full h-screen -z-10">
-          <PixelScene className="w-full h-full" />
+          <PixelScene className="w-full h-full" onLoaded={handleSceneLoaded} />
         </div>
 
         {/* Gradient Overlay for better text readability */}

@@ -6,20 +6,27 @@ import { useIsMobile, usePrefersReducedMotion } from '@/lib/hooks/useMediaQuery'
 
 interface PixelSceneProps {
   className?: string;
+  onLoaded?: () => void;
 }
 
 /**
  * PixelScene Component
  * Renders the Puddle pixel-art scene with editable layers
  */
-export function PixelScene({ className = '' }: PixelSceneProps) {
+export function PixelScene({ className = '', onLoaded }: PixelSceneProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rendererRef = useRef<CanvasSceneRenderer | null>(null);
   const isMobile = useIsMobile();
   const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
-    if (!canvasRef.current || prefersReducedMotion) return;
+    if (!canvasRef.current || prefersReducedMotion) {
+      // If reduced motion is preferred, still call onLoaded
+      if (prefersReducedMotion && onLoaded) {
+        onLoaded();
+      }
+      return;
+    }
 
     const renderer = new CanvasSceneRenderer(canvasRef.current);
     rendererRef.current = renderer;
@@ -27,8 +34,16 @@ export function PixelScene({ className = '' }: PixelSceneProps) {
     // Load the scene image
     renderer.loadSceneImage('/images/scenery.png').then(() => {
       console.log('Scene image loaded successfully');
+      // Call onLoaded callback when image is ready
+      if (onLoaded) {
+        onLoaded();
+      }
     }).catch((error: Error) => {
       console.error('Failed to load scene image:', error);
+      // Still call onLoaded even on error to prevent infinite loading
+      if (onLoaded) {
+        onLoaded();
+      }
     });
     
     renderer.start();
@@ -46,7 +61,7 @@ export function PixelScene({ className = '' }: PixelSceneProps) {
       window.removeEventListener('resize', handleResize);
       rendererRef.current = null;
     };
-  }, [prefersReducedMotion]);
+  }, [prefersReducedMotion, onLoaded]);
 
   return (
     <div className={`relative w-full h-screen ${className}`}>
