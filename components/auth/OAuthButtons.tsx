@@ -23,7 +23,7 @@ export function OAuthButtons({ onSuccess }: OAuthButtonsProps) {
 
     setLoadingProvider(null);
     onSuccess?.();
-    router.push('/home');
+    router.push('/');
   };
 
   return (

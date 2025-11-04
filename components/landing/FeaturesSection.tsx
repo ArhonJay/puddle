@@ -110,8 +110,8 @@ export function FeaturesSection() {
         >
           <h2 
             ref={headingRef}
-            className="font-[family-name:var(--font-pixel)] text-3xl md:text-4xl lg:text-5xl text-[var(--color-text-primary)]  min-h-[120px] md:min-h-[140px]" 
-            style={{ imageRendering: 'pixelated' }}
+            className="font-[family-name:var(--font-pixel)] text-3xl md:text-4xl lg:text-5xl text-[var(--color-text-primary)] min-h-[120px] md:min-h-[140px] leading-relaxed" 
+            style={{ imageRendering: 'pixelated', lineHeight: '1.3' }}
           >
             {displayedText.split(' world of puddling')[0]}
             {displayedText.includes('world of puddling') && (
@@ -124,7 +124,7 @@ export function FeaturesSection() {
               <span className="inline-block w-1 h-8 md:h-10 lg:h-12 bg-[var(--color-text-primary)] ml-1 animate-pulse"></span>
             )}
           </h2>
-          <p className="text-lg text-[var(--color-text-secondary)] max-w-3xl mx-auto">
+          <p className="text-lg text-[var(--color-text-secondary)] max-w-3xl mx-auto mt-4">
             Learn to puddle with fun, make money, save time, and create experience through Puddle.
           </p>
         </motion.div>

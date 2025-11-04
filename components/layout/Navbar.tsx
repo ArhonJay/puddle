@@ -86,6 +86,14 @@ export function Navbar() {
             className="flex items-center gap-2 group"
             onClick={closeMobileMenu}
           >
+            <Image 
+              src="/assets/logo.png" 
+              alt="Puddle Logo" 
+              width={64} 
+              height={64}
+              className="w-10 h-10"
+              style={{ imageRendering: 'pixelated' }}
+            />
             <span className="text-xl font-bold text-gradient font-[family-name:var(--font-pixel)]" style={{ imageRendering: 'pixelated' }}>Puddle</span>
           </Link>
 

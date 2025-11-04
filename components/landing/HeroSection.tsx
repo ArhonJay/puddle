@@ -68,7 +68,7 @@ export function HeroSection({ showScrollHint = true }: HeroSectionProps) {
               4px 4px 0 #0F172A
             `
           }}>
-            Just Pudling
+            Just Puddling
           </span>
         </motion.h1>
 

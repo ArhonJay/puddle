@@ -57,7 +57,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
     onSuccess?.();
     
     // Redirect to home page after successful login
-    router.push('/home');
+    router.push('/');
   };
 
   return (

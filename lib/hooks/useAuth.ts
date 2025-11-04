@@ -23,7 +23,7 @@ export function useAuth() {
   const loginWithEmail = async (email: string, password: string) => {
     await store.login(email, password);
     if (store.isAuthenticated) {
-      router.push('/home');
+      router.push('/');
     }
   };
 
@@ -33,7 +33,7 @@ export function useAuth() {
   const loginWithProvider = async (provider: 'google' | 'github') => {
     await store.loginWithProvider(provider);
     if (store.isAuthenticated) {
-      router.push('/home');
+      router.push('/');
     }
   };
 

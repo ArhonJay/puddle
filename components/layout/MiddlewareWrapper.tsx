@@ -39,9 +39,9 @@ export function MiddlewareWrapper({
       // User needs to be authenticated but isn't
       const redirect = redirectTo || '/login';
       router.push(`${redirect}?returnUrl=${encodeURIComponent(pathname)}`);
-    } else if (!requireAuth && isAuthenticated && pathname === '/') {
-      // User is on landing page but authenticated, redirect to home
-      router.push('/home');
+    } else if (!requireAuth && isAuthenticated && pathname === '/login') {
+      // User is on login page but authenticated, redirect to home
+      router.push('/');
     } else {
       setIsChecking(false);
     }
@@ -80,7 +80,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
  */
 export function PublicRoute({ 
   children, 
-  redirectTo = '/home' 
+  redirectTo = '/' 
 }: { 
   children: React.ReactNode;
   redirectTo?: string;
