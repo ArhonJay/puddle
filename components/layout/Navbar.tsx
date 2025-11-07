@@ -31,7 +31,7 @@ const navLinks: NavLink[] = [
   { label: 'Build', href: '/build' },
   { label: 'Community', href: '/community' },
   { label: 'Docs', href: '/docs' },
-  { label: 'Whitelist', href: '/whitelist' },
+  { label: 'Waitlist', href: '/waitlist' },
 ];
 
 export function Navbar() {

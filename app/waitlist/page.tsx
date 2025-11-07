@@ -7,25 +7,18 @@ import { MainLayout } from '@/components/layout';
 
 export default function WhitelistPage() {
   const [email, setEmail] = useState('');
-  const [wallet, setWallet] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; wallet?: string }>({});
+  const [errors, setErrors] = useState<{ email?: string }>({});
+  const [successMessage, setSuccessMessage] = useState('');
 
   const validateForm = (): boolean => {
-    const newErrors: { email?: string; wallet?: string } = {};
+    const newErrors: { email?: string } = {};
 
     // Email validation
     if (!email) {
       newErrors.email = 'Email is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       newErrors.email = 'Invalid email format';
-    }
-
-    // Wallet validation
-    if (!wallet) {
-      newErrors.wallet = 'Wallet address is required';
-    } else if (!/^0x[a-fA-F0-9]{40}$/.test(wallet)) {
-      newErrors.wallet = 'Invalid wallet address format';
     }
 
     setErrors(newErrors);
@@ -38,18 +31,44 @@ export default function WhitelistPage() {
     if (!validateForm()) return;
 
     setIsLoading(true);
+    setSuccessMessage('');
+    setErrors({});
 
-    // Mockup - simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    try {
+      const response = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
 
-    console.log('Whitelist submission:', { email, wallet });
-    
-    // Reset form
-    setEmail('');
-    setWallet('');
-    setIsLoading(false);
-    
-    alert('Successfully joined the whitelist! 🎉');
+      const data = await response.json();
+      console.log('Response status:', response.status);
+      console.log('Response data:', data);
+
+      if (!response.ok) {
+        if (response.status === 409) {
+          // Email already exists
+          setErrors({ email: 'This email is already registered on the waitlist!' });
+        } else {
+          setErrors({ email: data.error || 'Failed to join waitlist. Please try again.' });
+        }
+        return;
+      }
+
+      // Success
+      setSuccessMessage('Successfully joined the waitlist! 🎉');
+      setEmail('');
+      
+      // Clear success message after 5 seconds
+      setTimeout(() => setSuccessMessage(''), 5000);
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      setErrors({ email: 'Network error. Please check your connection and try again.' });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -102,12 +121,25 @@ export default function WhitelistPage() {
                 {/* Header */}
                 <div className="mb-5 lg:mb-6">
                   <h1 className="font-[family-name:var(--font-pixel)] text-xl lg:text-3xl text-white mb-2 lg:mb-3" style={{ imageRendering: 'pixelated' }}>
-                    Whitelist
+                    Waitlist
                   </h1>
                   <p className="text-white/70 text-xs lg:text-sm leading-relaxed">
-                    Be among the first to access exclusive Puddle NFTs! Enter your details below to secure your spot on our whitelist.
+                    Be among the first to access exclusive Puddle NFTs! Enter your details below to secure your spot on our waitlist.
                   </p>
                 </div>
+
+                {/* Success Message */}
+                {successMessage && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mb-3 lg:mb-4 p-3 bg-green-500/20 border-2 border-green-500 rounded-lg"
+                  >
+                    <p className="text-green-300 text-xs lg:text-sm font-[family-name:var(--font-pixel)]" style={{ imageRendering: 'pixelated' }}>
+                      {successMessage}
+                    </p>
+                  </motion.div>
+                )}
 
                 {/* Form */}
                 <form onSubmit={handleSubmit} className="space-y-3 lg:space-y-4">
@@ -131,30 +163,6 @@ export default function WhitelistPage() {
                     {errors.email && (
                       <p className="text-xs text-red-400 font-[family-name:var(--font-pixel)]" style={{ imageRendering: 'pixelated' }}>
                         {errors.email}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Wallet Field */}
-                  <div className="space-y-1.5 lg:space-y-2">
-                    <label htmlFor="wallet" className="block font-[family-name:var(--font-pixel)] text-xs lg:text-sm text-white/90" style={{ imageRendering: 'pixelated' }}>
-                      Wallet Address
-                    </label>
-                    <input
-                      id="wallet"
-                      type="text"
-                      placeholder="0x..."
-                      value={wallet}
-                      onChange={(e) => {
-                        setWallet(e.target.value);
-                        if (errors.wallet) setErrors({ ...errors, wallet: undefined });
-                      }}
-                      className="w-full px-3 lg:px-4 py-2 lg:py-2.5 bg-[#0a1628] border-2 border-[#2a4a62] rounded-lg text-white placeholder:text-white/40 focus:border-[#3b9dff] focus:outline-none transition-colors font-mono text-xs lg:text-sm"
-                      disabled={isLoading}
-                    />
-                    {errors.wallet && (
-                      <p className="text-xs text-red-400 font-[family-name:var(--font-pixel)]" style={{ imageRendering: 'pixelated' }}>
-                        {errors.wallet}
                       </p>
                     )}
                   </div>
