@@ -26,12 +26,15 @@ interface NavLink {
 }
 
 const navLinks: NavLink[] = [
-  { label: 'Explore', href: '/explore' },
-  { label: 'Foundation', href: '/foundation' },
-  { label: 'Build', href: '/build' },
-  { label: 'Community', href: '/community' },
-  { label: 'Docs', href: '/docs' },
   { label: 'Waitlist', href: '/waitlist' },
+];
+
+const disabledNavLinks: NavLink[] = [
+  { label: 'Explore', href: '#' },
+  { label: 'Foundation', href: '#' },
+  { label: 'Build', href: '#' },
+  { label: 'Community', href: '#' },
+  { label: 'Docs', href: '#' },
 ];
 
 export function Navbar() {
@@ -107,6 +110,15 @@ export function Navbar() {
               >
                 {link.label}
               </Link>
+            ))}
+            {disabledNavLinks.map((link) => (
+              <span
+                key={link.label}
+                className="nav-link text-[var(--color-text-tertiary)] cursor-not-allowed opacity-50"
+                title="Coming Soon"
+              >
+                {link.label}
+              </span>
             ))}
           </div>
 
@@ -207,6 +219,14 @@ export function Navbar() {
                 >
                   {link.label}
                 </Link>
+              ))}
+              {disabledNavLinks.map((link) => (
+                <span
+                  key={link.label}
+                  className="block py-2 text-[var(--color-text-tertiary)] opacity-50 cursor-not-allowed"
+                >
+                  {link.label}
+                </span>
               ))}
 
               {/* Mobile User Section */}
