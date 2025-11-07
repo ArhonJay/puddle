@@ -124,7 +124,7 @@ export default function WhitelistPage() {
                     Waitlist
                   </h1>
                   <p className="text-white/70 text-xs lg:text-sm leading-relaxed">
-                    Be among the first to access exclusive Puddle NFTs! Enter your details below to secure your spot on our waitlist.
+                    Be among the first to access Puddle Exclusive experience! Enter your details below to secure your spot on our waitlist.
                   </p>
                 </div>
 
@@ -180,7 +180,7 @@ export default function WhitelistPage() {
                         <span>Submitting...</span>
                       </div>
                     ) : (
-                      'Join Whitelist'
+                      'Join Waitlist'
                     )}
                   </button>
                 </form>
