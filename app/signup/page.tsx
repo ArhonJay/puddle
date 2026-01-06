@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { LoginForm, OAuthButtons } from '@/components/auth';
 import { MainLayout } from '@/components/layout';
 
-export default function LoginPage() {
+export default function SignupPage() {
   return (
     <MainLayout>
       <div className="fixed inset-0 top-[var(--navbar-height)] bg-gradient-to-br from-[#0a1628] via-[#0f1d2b] to-[#1e3a52] flex items-center justify-center p-4 overflow-hidden">
@@ -21,7 +21,7 @@ export default function LoginPage() {
         </div>
 
         <div className="w-full relative z-10" style={{ maxWidth: '500px' }}>
-          {/* Login Card */}
+          {/* Signup Card */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -31,39 +31,22 @@ export default function LoginPage() {
             {/* Header */}
             <div className="text-center mb-6">
               <h1 className="font-[family-name:var(--font-pixel)] text-2xl text-gray-900 mb-2" style={{ imageRendering: 'pixelated' }}>
-                Welcome back
+                Create your account
               </h1>
               <p className="text-gray-600 text-sm">
-                Log in to continue your journey
+                Start your saving journey today
               </p>
             </div>
 
-            {/* OAuth Buttons */}
-            <div>
-              <OAuthButtons />
-            </div>
+            {/* Email Signup Form */}
+            <LoginForm mode="signup" />
 
-            {/* Divider */}
-            <div className="relative my-6">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-white text-gray-500 uppercase tracking-wider text-xs font-semibold">
-                  OR
-                </span>
-              </div>
-            </div>
-
-            {/* Email Login Form */}
-            <LoginForm mode="login" />
-
-            {/* Sign Up Link */}
+            {/* Login Link */}
             <div className="mt-6 text-center">
               <p className="text-gray-700">
-                Don't have an account?{' '}
-                <Link href="/signup" className="text-[#3b9dff] hover:text-[#2a8ae8] font-semibold transition-colors">
-                  Sign up
+                Already have an account?{' '}
+                <Link href="/login" className="text-[#3b9dff] hover:text-[#2a8ae8] font-semibold transition-colors">
+                  Log in
                 </Link>
               </p>
             </div>

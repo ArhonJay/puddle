@@ -21,10 +21,16 @@ export function useAuth() {
    * Login with email and password
    */
   const loginWithEmail = async (email: string, password: string) => {
-    await store.login(email, password);
-    if (store.isAuthenticated) {
-      router.push('/');
-    }
+    const result = await store.login(email, password);
+    return result;
+  };
+
+  /**
+   * Sign up with email and password
+   */
+  const signupWithEmail = async (email: string, password: string, name?: string) => {
+    const result = await store.signup(email, password, name);
+    return result;
   };
 
   /**
@@ -32,16 +38,13 @@ export function useAuth() {
    */
   const loginWithProvider = async (provider: 'google' | 'github') => {
     await store.loginWithProvider(provider);
-    if (store.isAuthenticated) {
-      router.push('/');
-    }
   };
 
   /**
    * Logout and redirect to landing page
    */
-  const logout = () => {
-    store.logout();
+  const logout = async () => {
+    await store.logout();
     router.push('/');
   };
 
@@ -59,12 +62,14 @@ export function useAuth() {
   return {
     // State
     user: store.user,
+    session: store.session,
     isAuthenticated: store.isAuthenticated,
     isLoading: store.isLoading,
     error: store.error,
 
     // Actions
     loginWithEmail,
+    signupWithEmail,
     loginWithProvider,
     logout,
     requireAuth,

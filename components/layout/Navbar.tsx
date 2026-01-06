@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -17,6 +17,7 @@ import {
   X,
   User,
   LogOut,
+  ChevronDown,
 } from 'lucide-react';
 
 interface NavLink {
@@ -26,15 +27,12 @@ interface NavLink {
 }
 
 const navLinks: NavLink[] = [
-  { label: 'Waitlist', href: '/waitlist' },
-];
-
-const disabledNavLinks: NavLink[] = [
-  { label: 'Explore', href: '#' },
-  { label: 'Foundation', href: '#' },
-  { label: 'Build', href: '#' },
-  { label: 'Community', href: '#' },
+  { label: 'Explore', href: '/#features' },
+  { label: 'Foundation', href: '/#foundation' },
+  { label: 'Build', href: '/#build' },
+  { label: 'Community', href: '/#community' },
   { label: 'Docs', href: '#' },
+  { label: 'Waitlist', href: '/waitlist' },
 ];
 
 export function Navbar() {
@@ -49,10 +47,36 @@ export function Navbar() {
   } = useUIStore();
 
   const [mounted, setMounted] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Close user menu when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setIsUserMenuOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Get user initials
+  const getUserInitials = () => {
+    if (!user) return '?';
+    if (user.name) {
+      const names = user.name.split(' ');
+      if (names.length >= 2) {
+        return `${names[0][0]}${names[1][0]}`.toUpperCase();
+      }
+      return user.name.substring(0, 2).toUpperCase();
+    }
+    return user.email.substring(0, 2).toUpperCase();
+  };
 
   // Navbar background based on scroll position
   const navbarClasses = `
@@ -104,21 +128,12 @@ export function Navbar() {
           <div className="hidden md:flex items-center gap-6">
             {navLinks.map((link) => (
               <Link
-                key={link.href}
+                key={link.href + link.label}
                 href={link.href}
                 className="nav-link text-[var(--color-text-secondary)] hover:text-[var(--color-primary-500)]"
               >
                 {link.label}
               </Link>
-            ))}
-            {disabledNavLinks.map((link) => (
-              <span
-                key={link.label}
-                className="nav-link text-[var(--color-text-tertiary)] cursor-not-allowed opacity-50"
-                title="Coming Soon"
-              >
-                {link.label}
-              </span>
             ))}
           </div>
 
@@ -154,22 +169,51 @@ export function Navbar() {
 
             {/* User Menu / Sign Up Button */}
             {isAuthenticated && user ? (
-              <div className="hidden md:flex items-center gap-2">
-                <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--color-surface-hover)]">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--color-primary-400)] to-[var(--color-primary-600)] flex items-center justify-center">
-                    <User className="h-4 w-4 text-white" />
-                  </div>
-                  <span className="text-sm font-medium">{user.name || user.email}</span>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handleLogout}
-                  className="rounded-full"
-                  aria-label="Logout"
+              <div className="hidden md:block relative" ref={userMenuRef}>
+                <button
+                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                  className="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--color-primary-400)] to-[var(--color-primary-600)] flex items-center justify-center text-white font-bold text-sm hover:opacity-90 transition-opacity"
+                  aria-label="User menu"
                 >
-                  <LogOut className="h-5 w-5" />
-                </Button>
+                  {getUserInitials()}
+                </button>
+                
+                {/* Dropdown Menu */}
+                <AnimatePresence>
+                  {isUserMenuOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute right-0 mt-2 w-56 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl shadow-xl overflow-hidden z-50"
+                    >
+                      {/* User Info */}
+                      <div className="px-4 py-3 border-b border-[var(--color-border)]">
+                        <p className="text-sm font-semibold text-[var(--color-text-primary)] font-[family-name:var(--font-pixel)]" style={{ imageRendering: 'pixelated' }}>
+                          {user.name || 'User'}
+                        </p>
+                        <p className="text-xs text-[var(--color-text-tertiary)] truncate">
+                          {user.email}
+                        </p>
+                      </div>
+                      
+                      {/* Menu Items */}
+                      <div className="py-2">
+                        <button
+                          onClick={() => {
+                            handleLogout();
+                            setIsUserMenuOpen(false);
+                          }}
+                          className="w-full px-4 py-2 text-left text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)] hover:text-[var(--color-text-primary)] flex items-center gap-2 transition-colors"
+                        >
+                          <LogOut className="h-4 w-4" />
+                          Logout
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             ) : (
               <Link href="/login" className="hidden md:block">
@@ -212,7 +256,7 @@ export function Navbar() {
               {/* Mobile Navigation Links */}
               {navLinks.map((link) => (
                 <Link
-                  key={link.href}
+                  key={link.href + link.label}
                   href={link.href}
                   onClick={closeMobileMenu}
                   className="block py-2 text-[var(--color-text-secondary)] hover:text-[var(--color-primary-500)] transition-colors"
@@ -220,25 +264,17 @@ export function Navbar() {
                   {link.label}
                 </Link>
               ))}
-              {disabledNavLinks.map((link) => (
-                <span
-                  key={link.label}
-                  className="block py-2 text-[var(--color-text-tertiary)] opacity-50 cursor-not-allowed"
-                >
-                  {link.label}
-                </span>
-              ))}
 
               {/* Mobile User Section */}
               {isAuthenticated && user ? (
                 <div className="pt-4 border-t border-[var(--color-border)] space-y-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--color-primary-400)] to-[var(--color-primary-600)] flex items-center justify-center">
-                      <User className="h-5 w-5 text-white" style={{ imageRendering: 'pixelated' }} />
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--color-primary-400)] to-[var(--color-primary-600)] flex items-center justify-center text-white font-bold text-sm">
+                      {getUserInitials()}
                     </div>
                     <div>
-                      <p className="text-sm font-medium font-[family-name:var(--font-pixel)]" style={{ imageRendering: 'pixelated' }}>{user.name || user.email}</p>
-                      <p className="text-xs text-[var(--color-text-tertiary)] font-[family-name:var(--font-pixel)]" style={{ imageRendering: 'pixelated' }}>{user.email}</p>
+                      <p className="text-sm font-medium font-[family-name:var(--font-pixel)]" style={{ imageRendering: 'pixelated' }}>{user.name || 'User'}</p>
+                      <p className="text-xs text-[var(--color-text-tertiary)]">{user.email}</p>
                     </div>
                   </div>
                   <Button

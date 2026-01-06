@@ -1,11 +1,22 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { MainLayout } from '@/components/layout';
 import { PixelScene, HeroSection, FeaturesSection } from '@/components/landing';
 import { AdditionalSections } from '@/components/landing/AdditionalSections';
 import { useAuth } from '@/lib/hooks';
+import { useProfileStore } from '@/lib/store/profileStore';
 import { motion } from 'framer-motion';
+import { 
+  Star, 
+  Flame, 
+  Award, 
+  Trophy, 
+  Crown, 
+  Gem, 
+  Medal,
+  Heart
+} from 'lucide-react';
 import Link from 'next/link';
 
 export default function LandingPage() {
@@ -63,7 +74,7 @@ export default function LandingPage() {
         </div>
 
         {/* Footer */}
-        <footer className="relative bg-black/50 backdrop-blur-sm border-t border-white/10 py-12 px-4">
+        <footer id="foundation" className="relative bg-black/50 backdrop-blur-sm border-t border-white/10 py-12 px-4">
           <div className="container-responsive max-w-6xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-white/70">
               <div>
@@ -114,18 +125,39 @@ export default function LandingPage() {
 // Home Page Component (shown when authenticated)
 function HomePage() {
   const { user } = useAuth();
+  const { profile, fetchProfile } = useProfileStore();
+
+  useEffect(() => {
+    if (user?.id) {
+      fetchProfile(user.id, user.name);
+    }
+  }, [user?.id]);
+
+  const getRankIcon = (rank: string) => {
+    const iconClass = "w-6 h-6";
+    switch (rank?.toLowerCase()) {
+      case 'rookie saver': return <Medal className={`${iconClass} text-amber-600`} />;
+      case 'bronze saver': return <Medal className={`${iconClass} text-amber-600`} />;
+      case 'silver saver': return <Medal className={`${iconClass} text-slate-400`} />;
+      case 'gold saver': return <Trophy className={`${iconClass} text-yellow-400`} />;
+      case 'platinum saver': return <Gem className={`${iconClass} text-cyan-400`} />;
+      case 'diamond saver': return <Gem className={`${iconClass} text-blue-400`} />;
+      case 'master saver': return <Crown className={`${iconClass} text-yellow-300`} />;
+      default: return <Medal className={`${iconClass} text-amber-600`} />;
+    }
+  };
 
   const exploreCards = [
-    { title: 'DeFi Tutorials', description: 'Practice what you learned with bite-sized Web3 challenges.', icon: '🐸' },
-    { title: 'Savings Strategies', description: 'Explore fun, step-by-step strategies from beginner to advanced.', icon: '🚀' },
-    { title: 'MonthPuddle', description: 'Commit to 30 days of saving and building-while raising a virtual pet!', icon: '🥚' },
-    { title: 'Portfolio', description: 'Create and share your Web3 journey and savings goals.', icon: '💻' },
+    { title: 'DeFi Tutorials', description: 'Practice what you learned with bite-sized Web3 challenges.' },
+    { title: 'Savings Strategies', description: 'Explore fun, step-by-step strategies from beginner to advanced.' },
+    { title: 'MonthPuddle', description: 'Commit to 30 days of saving and building-while raising a virtual pet!' },
+    { title: 'Portfolio', description: 'Create and share your Web3 journey and savings goals.' },
   ];
 
   const tutorials = [
-    { title: 'Intro to DeFi', type: 'TUTORIAL', gradient: 'from-yellow-400 to-orange-500' },
-    { title: 'Smart Savings', type: 'TUTORIAL', gradient: 'from-blue-400 to-purple-500' },
-    { title: 'Web3 Wallet', type: 'TUTORIAL', gradient: 'from-purple-400 to-blue-600' },
+    { title: 'Intro to DeFi', type: 'TUTORIAL', image: '/images/card/intro.jpg' },
+    { title: 'Smart Savings', type: 'TUTORIAL', image: '/images/card/savings.png' },
+    { title: 'Web3 Wallet', type: 'TUTORIAL', image: '/images/card/web3.png' },
   ];
 
   return (
@@ -146,10 +178,11 @@ function HomePage() {
                   Your Web3 savings journey awaits-but first let's find something to learn.
                 </p>
                 <div className="flex justify-center">
-                  <Link href="/demo">
-                    <button className="bg-[#3b9dff] hover:bg-[#2a8ae8] text-white px-8 py-3 rounded-lg font-[family-name:var(--font-pixel)] text-sm border-[3px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] active:translate-x-[4px] active:translate-y-[4px] transition-all">
-                      Get Started
-                    </button>
+                  <Link 
+                    href="/jar"
+                    className="bg-[#3b9dff] hover:bg-[#2a8ae8] text-white px-8 py-3 rounded-lg font-[family-name:var(--font-pixel)] text-sm border-[3px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] active:translate-x-[4px] active:translate-y-[4px] transition-all"
+                  >
+                    Get Started
                   </Link>
                 </div>
               </div>
@@ -170,15 +203,10 @@ function HomePage() {
                       transition={{ delay: index * 0.1 }}
                       className="bg-[#1e3a52] rounded-2xl p-6 border-2 border-[#2a4a62] hover:border-[#3b9dff] transition-all cursor-pointer group"
                     >
-                      <div className="flex items-start gap-4">
-                        <div className="text-5xl">{card.icon}</div>
-                        <div className="flex-1">
-                          <h3 className="font-[family-name:var(--font-pixel)] text-xl mb-2 group-hover:text-[#3b9dff] transition-colors" style={{ imageRendering: 'pixelated' }}>
-                            {card.title}
-                          </h3>
-                          <p className="text-white/70 text-sm">{card.description}</p>
-                        </div>
-                      </div>
+                      <h3 className="font-[family-name:var(--font-pixel)] text-xl mb-2 group-hover:text-[#3b9dff] transition-colors" style={{ imageRendering: 'pixelated' }}>
+                        {card.title}
+                      </h3>
+                      <p className="text-white/70 text-sm">{card.description}</p>
                     </motion.div>
                   ))}
                 </div>
@@ -195,32 +223,32 @@ function HomePage() {
                 <div className="space-y-4">
                   <div className="flex gap-3">
                     <div className="bg-yellow-500 rounded-lg w-12 h-12 flex flex-col items-center justify-center flex-shrink-0">
-                      <span className="text-xs font-bold text-black">NOV</span>
-                      <span className="text-lg font-bold text-black">8</span>
+                      <span className="text-xs font-bold text-black">JAN</span>
+                      <span className="text-lg font-bold text-black">10</span>
                     </div>
                     <div>
-                      <h4 className="font-semibold text-sm mb-1">DeFi Workshop Dallas</h4>
-                      <p className="text-xs text-white/60">Sat Nov 8th @ 9:00pm ET</p>
+                      <h4 className="font-semibold text-sm mb-1">DeFi Workshop Online</h4>
+                      <p className="text-xs text-white/60">Fri Jan 10th @ 7:00pm ET</p>
                     </div>
                   </div>
                   <div className="flex gap-3">
                     <div className="bg-green-500 rounded-lg w-12 h-12 flex flex-col items-center justify-center flex-shrink-0">
-                      <span className="text-xs font-bold text-black">NOV</span>
-                      <span className="text-lg font-bold text-black">12</span>
+                      <span className="text-xs font-bold text-black">JAN</span>
+                      <span className="text-lg font-bold text-black">15</span>
                     </div>
                     <div>
-                      <h4 className="font-semibold text-sm mb-1">Savings Workshop (Tentative)</h4>
-                      <p className="text-xs text-white/60">Wed Nov 12th @ 3:00pm ET</p>
+                      <h4 className="font-semibold text-sm mb-1">Smart Savings AMA</h4>
+                      <p className="text-xs text-white/60">Wed Jan 15th @ 3:00pm ET</p>
                     </div>
                   </div>
                   <div className="flex gap-3">
                     <div className="bg-orange-500 rounded-lg w-12 h-12 flex flex-col items-center justify-center flex-shrink-0">
-                      <span className="text-xs font-bold text-black">NOV</span>
-                      <span className="text-lg font-bold text-black">25</span>
+                      <span className="text-xs font-bold text-black">JAN</span>
+                      <span className="text-lg font-bold text-black">22</span>
                     </div>
                     <div>
-                      <h4 className="font-semibold text-sm mb-1">Web3 Meetup - The Documentary</h4>
-                      <p className="text-xs text-white/60">Tue Nov 25th @ 3:00pm ET</p>
+                      <h4 className="font-semibold text-sm mb-1">Web3 Wallet Setup Live</h4>
+                      <p className="text-xs text-white/60">Wed Jan 22nd @ 6:00pm ET</p>
                     </div>
                   </div>
                 </div>
@@ -233,36 +261,36 @@ function HomePage() {
                     <h3 className="font-[family-name:var(--font-pixel)] text-xl" style={{ imageRendering: 'pixelated' }}>
                       {user?.name || 'User'}
                     </h3>
-                    <p className="text-white/60">Level 1</p>
+                    <p className="text-white/60">Level {profile?.level || 1}</p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div className="flex items-center gap-2">
-                    <span className="text-2xl">⭐</span>
+                    <Star className="w-6 h-6 text-yellow-400" />
                     <div>
-                      <p className="text-white/60 text-sm">0</p>
+                      <p className="text-white/60 text-sm">{profile?.total_xp || 0}</p>
                       <p className="text-xs text-white/40">Total XP</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-2xl">🥉</span>
+                    {getRankIcon(profile?.rank || '')}
                     <div>
-                      <p className="text-white/60 text-sm">Bronze</p>
+                      <p className="text-white/60 text-sm">{profile?.rank || 'Rookie Saver'}</p>
                       <p className="text-xs text-white/40">Rank</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-2xl">💎</span>
+                    <Award className="w-6 h-6 text-purple-400" />
                     <div>
                       <p className="text-white/60 text-sm">0</p>
                       <p className="text-xs text-white/40">Badges</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-2xl">🔥</span>
+                    <Flame className="w-6 h-6 text-orange-500" />
                     <div>
-                      <p className="text-white/60 text-sm">2</p>
+                      <p className="text-white/60 text-sm">{profile?.streak_days || 0}</p>
                       <p className="text-xs text-white/40">Day streak</p>
                     </div>
                   </div>
@@ -297,8 +325,12 @@ function HomePage() {
                 transition={{ delay: index * 0.1 }}
                 className="group cursor-pointer"
               >
-                <div className={`bg-gradient-to-br ${tutorial.gradient} rounded-2xl aspect-square flex items-center justify-center mb-3 overflow-hidden relative group-hover:scale-105 transition-transform`}>
-                  <span className="text-6xl"></span>
+                <div className="rounded-2xl aspect-square mb-3 overflow-hidden relative group-hover:scale-105 transition-transform">
+                  <img 
+                    src={tutorial.image} 
+                    alt={tutorial.title}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <div className="bg-[#0f1d2b] px-3 py-1 rounded-lg inline-block mb-2">
                   <span className="text-xs font-semibold text-white/60">{tutorial.type}</span>
@@ -389,8 +421,8 @@ function HomePage() {
               </div>
             </div>
 
-            <div className="text-center text-white/40 text-sm pt-8 border-t border-white/10">
-              Made with ❤️ in the Puddleverse
+            <div className="text-center text-white/40 text-sm pt-8 border-t border-white/10 flex items-center justify-center gap-1">
+              Made with <Heart className="w-4 h-4 text-red-500 fill-red-500" /> in the Puddleverse
             </div>
           </div>
         </footer>

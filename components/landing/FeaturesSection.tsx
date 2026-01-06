@@ -12,7 +12,7 @@ const categories = ['Popular', 'Web3 Basics', 'DeFi', 'Savings'];
 const features = [
   {
     category: 'Web3 Basics',
-    title: 'Wallet Setup',
+    title: 'Wallet Fundamentals',
     description: 'Learn wallet fundamentals such as private keys, seed phrases, and secure storage with the...',
     level: 'BEGINNER',
     image: '/images/features/ench_forest.png',
@@ -28,7 +28,7 @@ const features = [
   },
   {
     category: 'Web3 Basics',
-    title: 'Smart Contracts',
+    title: 'Smart Contracts 101',
     description: 'Learn to use smart contracts and interact with decentralized applications with ease,...',
     level: 'BEGINNER',
     image: '/images/features/float.png',
@@ -98,7 +98,7 @@ export function FeaturesSection() {
     : features.filter(f => f.category === activeCategory);
 
   return (
-    <section className="py-20 px-4 bg-[var(--color-background)]">
+    <section id="features" className="py-20 px-4 bg-[var(--color-background)]">
       <div className="container-responsive max-w-7xl mx-auto">
         {/* Section Header */}
         <motion.div

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Github } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/lib/hooks';
@@ -11,19 +10,18 @@ interface OAuthButtonsProps {
 }
 
 export function OAuthButtons({ onSuccess }: OAuthButtonsProps) {
-  const router = useRouter();
   const { loginWithProvider } = useAuth();
   const [loadingProvider, setLoadingProvider] = useState<string | null>(null);
 
   const handleOAuthLogin = async (provider: 'google' | 'github') => {
     setLoadingProvider(provider);
-
-    // Use the authStore loginWithProvider method
+    
+    // This will redirect to OAuth provider
     await loginWithProvider(provider);
-
+    
+    // Note: The redirect happens, so this code may not execute
     setLoadingProvider(null);
     onSuccess?.();
-    router.push('/');
   };
 
   return (

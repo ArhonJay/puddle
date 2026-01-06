@@ -3,27 +3,37 @@
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/lib/hooks';
 
 interface LoginFormProps {
+  mode?: 'login' | 'signup';
   onSuccess?: () => void;
 }
 
-export function LoginForm({ onSuccess }: LoginFormProps) {
+export function LoginForm({ mode = 'signup', onSuccess }: LoginFormProps) {
   const router = useRouter();
-  const { loginWithEmail } = useAuth();
+  const { loginWithEmail, signupWithEmail, clearError, error: authError } = useAuth();
 
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [errors, setErrors] = useState<{ name?: string; email?: string; password?: string }>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const isSignup = mode === 'signup';
 
   const validateForm = (): boolean => {
-    const newErrors: { email?: string; password?: string } = {};
+    const newErrors: { name?: string; email?: string; password?: string } = {};
+
+    // Name validation (only for signup)
+    if (isSignup && !name.trim()) {
+      newErrors.name = 'Name is required';
+    }
 
     // Email validation
     if (!email) {
@@ -45,23 +55,70 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    clearError();
+    setSuccessMessage(null);
 
     if (!validateForm()) return;
 
     setIsLoading(true);
 
-    // Use the authStore loginWithEmail method (handles loading state internally)
-    await loginWithEmail(email, password);
+    let result;
+    if (isSignup) {
+      result = await signupWithEmail(email, password, name);
+      if (!result.error) {
+        setSuccessMessage('Account created! Please check your email to confirm your account.');
+        setIsLoading(false);
+        return;
+      }
+    } else {
+      result = await loginWithEmail(email, password);
+      if (!result.error) {
+        onSuccess?.();
+        router.push('/');
+        return;
+      }
+    }
 
     setIsLoading(false);
-    onSuccess?.();
-    
-    // Redirect to home page after successful login
-    router.push('/');
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Success Message */}
+      {successMessage && (
+        <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+          <p className="text-sm text-green-700">{successMessage}</p>
+        </div>
+      )}
+
+      {/* Auth Error */}
+      {authError && (
+        <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-sm text-red-700">{authError}</p>
+        </div>
+      )}
+
+      {/* Name Field (Signup only) */}
+      {isSignup && (
+        <div className="space-y-2">
+          <Input
+            id="name"
+            type="text"
+            placeholder="Name"
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value);
+              if (errors.name) setErrors({ ...errors, name: undefined });
+            }}
+            className="h-12 bg-white border-2 border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:ring-0 rounded-lg"
+            disabled={isLoading}
+          />
+          {errors.name && (
+            <p className="text-sm text-red-500 animate-fade-in-up">{errors.name}</p>
+          )}
+        </div>
+      )}
+
       {/* Email Field */}
       <div className="space-y-2">
         <Input
@@ -120,21 +177,23 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
         {isLoading ? (
           <div className="flex items-center gap-2">
             <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-            <span>Signing up...</span>
+            <span>{isSignup ? 'Creating account...' : 'Logging in...'}</span>
           </div>
         ) : (
-          'Sign up for free'
+          isSignup ? 'Sign up for free' : 'Log in'
         )}
       </Button>
 
-      {/* Terms */}
-      <p className="text-center text-xs text-gray-500 pt-2">
-        By signing up, I agree to Puddle{' '}
-        <Link href="/terms" className="text-gray-700 underline hover:text-gray-900">
-          Terms
-        </Link>
-        .
-      </p>
+      {/* Terms (Signup only) */}
+      {isSignup && (
+        <p className="text-center text-xs text-gray-500 pt-2">
+          By signing up, I agree to Puddle{' '}
+          <Link href="/terms" className="text-gray-700 underline hover:text-gray-900">
+            Terms
+          </Link>
+          .
+        </p>
+      )}
     </form>
   );
 }

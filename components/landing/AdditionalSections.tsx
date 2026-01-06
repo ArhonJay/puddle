@@ -89,7 +89,7 @@ export function AdditionalSections() {
       </section>
 
       {/* Build Portfolio Section */}
-      <section className="py-20 px-4 bg-[var(--color-background)]">
+      <section id="build" className="py-20 px-4 bg-[var(--color-background)]">
         <div className="container-responsive max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left - Image Placeholder */}
@@ -128,7 +128,7 @@ export function AdditionalSections() {
       </section>
 
       {/* Community Section */}
-      <section className="py-20 px-4 bg-[var(--color-surface)]">
+      <section id="community" className="py-20 px-4 bg-[var(--color-surface)]">
         <div className="container-responsive max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left - Content */}
@@ -142,7 +142,7 @@ export function AdditionalSections() {
                 Make friends along the way
               </h2>
               <p className="text-lg text-[var(--color-text-secondary)] leading-relaxed mb-6">
-                Building is so much better together than alone. Join our community forum and Discord to give and receive help, collaborate on projects, and connect over shared passions.
+                Join a vibrant community of learners and creators. Share your progress, collaborate on projects, and celebrate each other's achievements as you all level up your financial skills together.
               </p>
             </motion.div>
 
@@ -195,7 +195,7 @@ export function AdditionalSections() {
               {/* Avatar Placeholder */}
               <div className="flex-shrink-0">
                 <div className="w-32 h-32 rounded-full bg-gradient-to-br from-blue-400 to-purple-600 border-4 border-[var(--color-border)] flex items-center justify-center text-5xl">
-                  👤
+                RB
                 </div>
               </div>
 
@@ -206,12 +206,12 @@ export function AdditionalSections() {
                   <div className="absolute left-0 top-8 -translate-x-2 w-0 h-0 border-t-8 border-t-transparent border-r-8 border-r-[var(--color-border)] border-b-8 border-b-transparent"></div>
                   
                   <div className="mb-4">
-                    <h3 className="font-bold text-[var(--color-text-primary)] mb-1">Moses</h3>
-                    <p className="text-sm text-[var(--color-text-tertiary)]">💼 Software Developer • 📍 Brooklyn, NY</p>
+                    <h3 className="font-bold text-[var(--color-text-primary)] mb-1">Ray Cielo Briones</h3>
+                    <p className="text-sm text-[var(--color-text-tertiary)]">Software Developer • Philippines</p>
                   </div>
                   
                   <p className="text-[var(--color-text-secondary)] leading-relaxed">
-                    Puddle helped reignite my passion for coding after the Holiday Hackathon. Since then I have connected with people who share similar interests as I do. It feels like home. Full credits to this platform on landing my first tech job!
+                    Puddle helped me understand financial concepts in a fun and interactive way. The gamified approach kept me engaged, and I loved earning badges as I progressed through the lessons!
                   </p>
                 </div>
               </div>
@@ -228,7 +228,7 @@ export function AdditionalSections() {
               {/* Avatar Placeholder */}
               <div className="flex-shrink-0">
                 <div className="w-32 h-32 rounded-full bg-gradient-to-br from-pink-400 to-red-600 border-4 border-[var(--color-border)] flex items-center justify-center text-5xl">
-                  👤
+                AC
                 </div>
               </div>
 
@@ -239,12 +239,12 @@ export function AdditionalSections() {
                   <div className="absolute left-0 top-8 -translate-x-2 w-0 h-0 border-t-8 border-t-transparent border-r-8 border-r-[var(--color-border)] border-b-8 border-b-transparent"></div>
                   
                   <div className="mb-4">
-                    <h3 className="font-bold text-[var(--color-text-primary)] mb-1">Evangelene</h3>
-                    <p className="text-sm text-[var(--color-text-tertiary)]">🎓 Student • 📍 San Francisco, CA</p>
+                    <h3 className="font-bold text-[var(--color-text-primary)] mb-1">Arron Acasio</h3>
+                    <p className="text-sm text-[var(--color-text-tertiary)]">Student • Philippines</p>
                   </div>
                   
                   <p className="text-[var(--color-text-secondary)] leading-relaxed">
-                    I love how Puddle makes learning Web3 fun and engaging! The pixel art aesthetic and gamified experience keep me motivated to save and learn every day.
+                    I love how Puddle makes learning about money fun and interactive. The community is supportive, and the challenges really helped me apply what I learned. Highly recommend to anyone looking to improve their financial skills!
                   </p>
                 </div>
               </div>
