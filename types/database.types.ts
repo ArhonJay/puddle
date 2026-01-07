@@ -107,6 +107,108 @@ export interface UserBadge {
 }
 
 /**
+ * Group Jar - Pooled savings container for multiple members
+ */
+export interface GroupJar {
+  id: string;
+  name: string;
+  goal_amount: number;
+  current_amount: number;
+  image_url: string | null;
+  target_date: string | null;
+  creator_id: string;
+  contract_address: string | null;
+  required_approvals: number; // Default 2 for 2-of-3
+  is_completed: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+/**
+ * Group Jar Member - Tracks members and their contributions
+ */
+export interface GroupJarMember {
+  id: string;
+  group_jar_id: string;
+  user_id: string;
+  wallet_address: string;
+  display_name: string | null;
+  status: 'pending' | 'active' | 'left';
+  contributed_amount: number;
+  contribution_percentage: number;
+  invited_by: string | null;
+  joined_at: string | null;
+  created_at: string;
+}
+
+/**
+ * Withdrawal Request - For pooled jar withdrawals requiring approval
+ */
+export interface WithdrawalRequest {
+  id: string;
+  group_jar_id: string;
+  requester_id: string;
+  amount: number;
+  destination_wallet: string;
+  reason: string | null;
+  status: 'pending' | 'approved' | 'rejected' | 'executed' | 'cancelled';
+  approvals_count: number;
+  rejections_count: number;
+  created_at: string;
+  executed_at: string | null;
+  tx_hash: string | null;
+}
+
+/**
+ * Withdrawal Approval - Individual member votes on withdrawal requests
+ */
+export interface WithdrawalApproval {
+  id: string;
+  withdrawal_request_id: string;
+  user_id: string;
+  decision: 'approve' | 'reject';
+  created_at: string;
+}
+
+/**
+ * Group Jar Activity - Audit log for all group jar actions
+ */
+export interface GroupJarActivity {
+  id: string;
+  group_jar_id: string;
+  user_id: string;
+  action_type: 
+    | 'jar_created'
+    | 'member_invited'
+    | 'member_joined'
+    | 'member_left'
+    | 'deposit'
+    | 'withdrawal_requested'
+    | 'withdrawal_approved'
+    | 'withdrawal_rejected'
+    | 'withdrawal_executed'
+    | 'withdrawal_cancelled';
+  amount: number | null;
+  metadata: Record<string, unknown> | null;
+  tx_hash: string | null;
+  created_at: string;
+}
+
+/**
+ * Group Jar Transaction - Tracks deposits per member
+ */
+export interface GroupJarTransaction {
+  id: string;
+  group_jar_id: string;
+  user_id: string;
+  type: 'deposit' | 'withdraw';
+  amount: number;
+  tx_hash: string | null;
+  note: string | null;
+  created_at: string;
+}
+
+/**
  * XP thresholds for each level
  */
 export const LEVEL_THRESHOLDS = [
